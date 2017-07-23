@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import sys
 import gi
 gi.require_version('Gst', '1.0')
@@ -7,9 +5,6 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('GdkX11', '3.0')
 gi.require_version('GstVideo', '1.0')
 from gi.repository import Gst, Gtk, GLib, GdkX11, GstVideo
-
-# http://docs.gstreamer.com/display/GstSDK/Basic+tutorial+5%3A+GUI+toolkit+integration
-
 
 class Player(object):
 
@@ -20,20 +15,17 @@ class Player(object):
         # initialize GStreamer
         Gst.init(sys.argv)
 
-        self.state = Gst.State.NULL
-        self.duration = Gst.CLOCK_TIME_NONE
+        #self.state = Gst.State.NULL
+        #self.duration = Gst.CLOCK_TIME_NONE
         self.playbin = Gst.ElementFactory.make("playbin", "playbin")
         if not self.playbin:
             print("ERROR: Could not create playbin.")
             sys.exit(1)
 
-        # set up URI
-        self.playbin.set_property("uri", "https://chitoge.sovetromantica.com/anime/305_sin-nanatsu-no-taizai/episodes/dubbed/episode_7.mp4")
-
         # connect to interesting signals in playbin
-        self.playbin.connect("video-tags-changed", self.on_tags_changed)
-        self.playbin.connect("audio-tags-changed", self.on_tags_changed)
-        self.playbin.connect("text-tags-changed", self.on_tags_changed)
+        #self.playbin.connect("video-tags-changed", self.on_tags_changed)
+        #self.playbin.connect("audio-tags-changed", self.on_tags_changed)
+        #self.playbin.connect("text-tags-changed", self.on_tags_changed)
 
         # create the GUI
         self.build_ui()
@@ -44,8 +36,8 @@ class Player(object):
         bus.add_signal_watch()
         bus.connect("message::error", self.on_error)
         bus.connect("message::eos", self.on_eos)
-        bus.connect("message::state-changed", self.on_state_changed)
-        bus.connect("message::application", self.on_application_message)
+        #bus.connect("message::state-changed", self.on_state_changed)
+        #bus.connect("message::application", self.on_application_message)
 
     # set the playbin to PLAYING (start playback), register refresh callback
     # and start the GTK main loop
@@ -57,7 +49,7 @@ class Player(object):
             sys.exit(1)
 
         # register a function that GLib will call every second
-        GLib.timeout_add_seconds(1, self.refresh_ui)
+        '''GLib.timeout_add_seconds(1, self.refresh_ui)'''
 
         # start the GTK main loop. we will not regain control until
         # Gtk.main_quit() is called
@@ -76,10 +68,10 @@ class Player(object):
         main_window = Gtk.Window.new(Gtk.WindowType.TOPLEVEL)
         main_window.connect("delete-event", self.on_delete_event)
 
-        video_window = Gtk.DrawingArea.new()
+        '''video_window = Gtk.DrawingArea.new()
         video_window.set_double_buffered(False)
         video_window.connect("realize", self.on_realize)
-        video_window.connect("draw", self.on_draw)
+        video_window.connect("draw", self.on_draw)'''
 
         play_button = Gtk.Button.new_from_stock(Gtk.STOCK_MEDIA_PLAY)
         play_button.connect("clicked", self.on_play)
@@ -90,26 +82,26 @@ class Player(object):
         stop_button = Gtk.Button.new_from_stock(Gtk.STOCK_MEDIA_STOP)
         stop_button.connect("clicked", self.on_stop)
 
-        self.slider = Gtk.HScale.new_with_range(0, 100, 1)
+        '''self.slider = Gtk.HScale.new_with_range(0, 100, 1)
         self.slider.set_draw_value(False)
         self.slider_update_signal_id = self.slider.connect(
-            "value-changed", self.on_slider_changed)
+            "value-changed", self.on_slider_changed)'''
 
-        self.streams_list = Gtk.TextView.new()
-        self.streams_list.set_editable(False)
+        '''self.streams_list = Gtk.TextView.new()
+        self.streams_list.set_editable(False)'''
 
         controls = Gtk.HBox.new(False, 0)
         controls.pack_start(play_button, False, False, 2)
         controls.pack_start(pause_button, False, False, 2)
         controls.pack_start(stop_button, False, False, 2)
-        controls.pack_start(self.slider, True, True, 0)
+        '''controls.pack_start(self.slider, True, True, 0)'''
 
-        main_hbox = Gtk.HBox.new(False, 0)
-        main_hbox.pack_start(video_window, True, True, 0)
-        main_hbox.pack_start(self.streams_list, False, False, 2)
+        '''main_hbox = Gtk.HBox.new(False, 0)'''
+        '''main_hbox.pack_start(video_window, True, True, 0)'''
+        '''main_hbox.pack_start(self.streams_list, False, False, 2)'''
 
         main_box = Gtk.VBox.new(False, 0)
-        main_box.pack_start(main_hbox, True, True, 0)
+        '''main_box.pack_start(main_hbox, True, True, 0)'''
         main_box.pack_start(controls, False, False, 0)
 
         main_window.add(main_box)
@@ -153,7 +145,7 @@ class Player(object):
     # redrawn. GStreamer takes care of this in the PAUSED and PLAYING states.
     # in the other states we simply draw a black rectangle to avoid
     # any garbage showing up
-    def on_draw(self, widget, cr):
+    '''def on_draw(self, widget, cr):
         if self.state < Gst.State.PAUSED:
             allocation = widget.get_allocation()
 
@@ -161,18 +153,18 @@ class Player(object):
             cr.rectangle(0, 0, allocation.width, allocation.height)
             cr.fill()
 
-        return False
+        return False'''
 
     # this function is called when the slider changes its position.
     # we perform a seek to the new position here
-    def on_slider_changed(self, range):
+    '''def on_slider_changed(self, range):
         value = self.slider.get_value()
         self.playbin.seek_simple(Gst.Format.TIME,
                                  Gst.SeekFlags.FLUSH | Gst.SeekFlags.KEY_UNIT,
-                                 value * Gst.SECOND)
+                                 value * Gst.SECOND)'''
 
     # this function is called periodically to refresh the GUI
-    def refresh_ui(self):
+    '''def refresh_ui(self):
         current = -1
 
         # we do not want to update anything unless we are in the PAUSED
@@ -203,16 +195,16 @@ class Player(object):
             # enable the signal again
             self.slider.handler_unblock(self.slider_update_signal_id)
 
-        return True
+        return True'''
 
     # this function is called when new metadata is discovered in the stream
-    def on_tags_changed(self, playbin, stream):
+    '''def on_tags_changed(self, playbin, stream):
         # we are possibly in a GStreamer working thread, so we notify
         # the main thread of this event through a message in the bus
         self.playbin.post_message(
             Gst.Message.new_application(
                 self.playbin,
-                Gst.Structure.new_empty("tags-changed")))
+                Gst.Structure.new_empty("tags-changed")))'''
 
     # this function is called when an error message is posted on the bus
     def on_error(self, bus, msg):
@@ -229,7 +221,7 @@ class Player(object):
 
     # this function is called when the pipeline changes states.
     # we use it to keep track of the current state
-    def on_state_changed(self, bus, msg):
+    ''''def on_state_changed(self, bus, msg):
         old, new, pending = msg.parse_state_changed()
         if not msg.src == self.playbin:
             # not from the playbin, ignore
@@ -242,11 +234,11 @@ class Player(object):
         if old == Gst.State.READY and new == Gst.State.PAUSED:
             # for extra responsiveness we refresh the GUI as soons as
             # we reach the PAUSED state
-            self.refresh_ui()
+            self.refresh_ui()'''
 
     # extract metadata from all the streams and write it to the text widget
     # in the GUI
-    def analyze_streams(self):
+    '''def analyze_streams(self):
         # clear current contents of the widget
         buffer = self.streams_list.get_buffer()
         buffer.set_text("")
@@ -301,16 +293,21 @@ class Player(object):
                 if ret:
                     buffer.insert_at_cursor(
                         "  language: {0}\n".format(
-                            str or "unknown"))
+                            str or "unknown"))'''
+                    
+    # set up URI
+    def set_url(self, url):
+        self.playbin.set_property("uri", url)                
 
     # this function is called when an "application" message is posted on the bus
     # here we retrieve the message posted by the on_tags_changed callback
-    def on_application_message(self, bus, msg):
+    '''def on_application_message(self, bus, msg):
         if msg.get_structure().get_name() == "tags-changed":
             # if the message is the "tags-changed", update the stream info in
             # the GUI
-            self.analyze_streams()
+            self.analyze_streams()'''
 
 if __name__ == '__main__':
     p = Player()
-p.start()
+    p.set_url("https://chitoge.sovetromantica.com/anime/305_sin-nanatsu-no-taizai/episodes/dubbed/episode_7.mp4")
+    p.start()
