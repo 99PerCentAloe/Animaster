@@ -309,5 +309,6 @@ class Player(object):
 
 if __name__ == '__main__':
     p = Player()
-    p.set_url("https://chitoge.sovetromantica.com/anime/305_sin-nanatsu-no-taizai/episodes/dubbed/episode_7.mp4")
+    #p.set_url("https://chitoge.sovetromantica.com/anime/305_sin-nanatsu-no-taizai/episodes/dubbed/episode_7.mp4")
+    p.set_url("http://player.adcdn.tv/embed/storage1/634/1/0JrQvtGI0LXRh9C60LAg0LjQtyDQodCw0LrRg9GA0LDRgdC%2BIC0gMSDRgdC10YDQuNGPIFNoaW5hLCBXb2xmeXM%3D/kvv")
     p.start()
